@@ -2,11 +2,12 @@
 library(predictiveModeling)
 library(synapseClient)
 library(graphite)
-#synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
 library(multicore)
 library(doMC)
 registerDoMC()
 
+
+# Share the repository with DrugResponse in github
 source("~/DrugResponse/R5/crossValidatePredictiveModel1.R")
 source("~/DrugResponse/R5/myEnetModel.R")
 ###################################################
@@ -29,7 +30,9 @@ layer_drug <- loadEntity(id_drugLayer)
 adf_drug <- layer_drug$objects$adf_drug
 
 
-#featureData <- createAggregateFeatureDataSet(list(expr = eSet_expr, copy = eSet_copy, mut = eSet_oncomap))
+
+# Using only Expression profile dataset
+# featureData <- createAggregateFeatureDataSet(list(expr = eSet_expr, copy = eSet_copy, mut = eSet_oncomap))
 featureData <- exprs(eSet_expr)
 
 # NA filter for training set
@@ -38,17 +41,15 @@ dataSets_ccle <- createFeatureAndResponseDataList(t(featureData_filtered),adf_dr
 
 
 load("~/DrugResponse/pathway_analysis/graphite_pathways.Rdata")
+
+# Test with Biocarta pathways
 groups=list()
-# for(k in 1:length(KEGG)){
-#   groups[[k]]=nodes(KEGG[[k]])
-# }
 for(k in 1:length(BIOCARTA)){
   groups[[k]]=nodes(BIOCARTA[[k]])
 }
-# for(k in 1:length(REACTOME)){
-#   groups[[k]]=nodes(REACTOME[[k]])
-# }
 
+
+# all drugs
 for(kk in 1:ncol(dataSets_ccle$responseData)){  
   
   
@@ -108,5 +109,6 @@ for(kk in 1:ncol(dataSets_ccle$responseData)){
       break
     }
   }
+  
   
 }
