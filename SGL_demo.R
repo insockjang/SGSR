@@ -2,14 +2,13 @@
 library(predictiveModeling)
 library(synapseClient)
 library(graphite)
+
 library(multicore)
 library(doMC)
 registerDoMC()
 
-
-# Share the repository with DrugResponse in github
 source("~/DrugResponse/R5/crossValidatePredictiveModel1.R")
-source("~/DrugResponse/R5/myEnetModel.R")
+source("~/SGR/SGL/mySGLModel.R")
 ###################################################
 #### Load CCLE Molecular Feature Data from Synapse ####
 ###################################################
@@ -30,10 +29,7 @@ layer_drug <- loadEntity(id_drugLayer)
 adf_drug <- layer_drug$objects$adf_drug
 
 
-
-# Using only Expression profile dataset
-# featureData <- createAggregateFeatureDataSet(list(expr = eSet_expr, copy = eSet_copy, mut = eSet_oncomap))
-featureData <- exprs(eSet_expr)
+featureData <- createAggregateFeatureDataSet(list(expr = eSet_expr, copy = eSet_copy, mut = eSet_oncomap))
 
 # NA filter for training set
 featureData_filtered <- filterNasFromMatrix(featureData, filterBy = "rows")
@@ -41,74 +37,61 @@ dataSets_ccle <- createFeatureAndResponseDataList(t(featureData_filtered),adf_dr
 
 
 load("~/DrugResponse/pathway_analysis/graphite_pathways.Rdata")
-
-# Test with Biocarta pathways
 groups=list()
 for(k in 1:length(BIOCARTA)){
-  groups[[k]]=nodes(BIOCARTA[[k]])
+  a=nodes(BIOCARTA[[k]])
+  a1<-paste(a,"_expr",sep="")
+  a2<-paste(a,"_copy",sep="")
+  a3<-paste(a,"_mut",sep="")
+  aa<-union(a1,union(a2,a3))
+  groups[[k]]<-aa
 }
 
+kk=1  
 
-# all drugs
-for(kk in 1:ncol(dataSets_ccle$responseData)){  
-  
-  
-  #########################################################################################################
-  ########  Training and Testing data are scaled(normalized) vs. raw(unnormalized)  #######################
-  #########################################################################################################
-  
-  # data preprocessing for preselecting features
-  filteredData<-filterPredictiveModelData(dataSets_ccle$featureData,dataSets_ccle$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
-  
-  # filtered feature and response data
-  filteredFeatureData  <- filteredData$featureData
-  filteredResponseData <- filteredData$responseData
-  
-  ## scale these data    
-  filteredFeatureDataScaled <- scale(filteredFeatureData)
-  filteredResponseDataScaled <- scale(filteredResponseData)  
-  
-  
-  # 5 fold cross validation 
-  
-  alphas  = unique(createENetTuneGrid()[,1])
-  lambdas = createENetTuneGrid(alphas = 1)[,2]
-  
-  penalty<-rep(1,ncol(filteredFeatureDataScaled))
-  mse<-list()
-  k1 <- 0
-  while(k1 <= 10){
-    k1<-k1+1
-    MSE<-c()
-    set.seed(2)
-    fit<-cv.glmnet(filteredFeatureDataScaled,filteredResponseDataScaled,alpha=1,lambda = lambdas,nfolds=5,penalty.factor = penalty)
-    a<-min(fit$cvm)
-    M<-foreach(kkk = 1:length(groups)) %dopar% {
-      group <- groups[[kkk]]
-      b<-match(group,colnames(filteredFeatureDataScaled))
-      if(length(which(is.na(b)==0))>0){
-        penalty2<-penalty
-        penalty2[b[which(is.na(b)==0)]]<-0
-        set.seed(2)
-        fit<-cv.glmnet(filteredFeatureDataScaled,filteredResponseDataScaled,alpha=1,lambda = lambdas,nfolds=5,penalty.factor = penalty2)
-        return(min(fit$cvm))
-      }else{
-        return(a)
-      }     
-    }
-    MSE<-do.call("c",M)
-    
-    print(k1)
-    
-    if(min(MSE)<a){
-      group1<-groups[[which.min(MSE)]]
-      b<-match(group1,colnames(filteredFeatureDataScaled))
-      penalty[b[which(is.na(b)==0)]]<-0
-      mse[[k1]]<-MSE
-    }else{
-      break
-    }
-  }
-  
-  
-}
+#########################################################################################################
+########  Training and Testing data are scaled(normalized) vs. raw(unnormalized)  #######################
+#########################################################################################################
+
+# data preprocessing for preselecting features
+filteredData<-filterPredictiveModelData(dataSets_ccle$featureData,dataSets_ccle$responseData[,kk,drop=FALSE])
+
+# filtered feature and response data
+filteredFeatureData  <- filteredData$featureData
+filteredResponseData <- filteredData$responseData
+
+## scale these data    
+filteredFeatureDataScaled <- scale(filteredFeatureData)
+#filteredResponseDataScaled <- scale(filteredResponseData)  
+filteredResponseDataScaled <- (filteredResponseData)  
+
+
+# 5 fold cross validation 
+
+alphas  = unique(createENetTuneGrid()[,1])
+lambdas = createENetTuneGrid(alphas = 1)[,2]
+
+set.seed(2)
+resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = mySGLModel$new(), alpha=1, lambda = lambdas, nfolds = 5,iterations=5,groups = groups)
+
+set.seed(2)
+resultsScale1<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel$new(), alpha=1, lambda = lambdas, nfolds = 5)
+
+
+
+corPearsonScale<-c()
+corSpearmanScale<-c()
+
+trPred <- foreach(k = 1:5) %do%{resultsScale1[[k]]$trainPredictions}
+tePred <- foreach(k = 1:5) %do%{resultsScale1[[k]]$testPredictions}
+trObsr <- foreach(k = 1:5) %do%{resultsScale1[[k]]$trainObservations}
+teObsr <- foreach(k = 1:5) %do%{resultsScale1[[k]]$testObservations}
+
+allTrPred<-do.call("c",trPred)
+allTePred<-do.call("c",tePred)
+allTrObsr<-do.call("c",trObsr)
+allTeObsr<-do.call("c",teObsr)
+
+c(cor(allTrPred,allTrObsr),cor(allTePred,allTeObsr))
+c(cor(allTrPred,allTrObsr,method = "spearman"),cor(allTePred,allTeObsr,method = "spearman"))
+
