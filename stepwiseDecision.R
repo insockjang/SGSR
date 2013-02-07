@@ -1,4 +1,4 @@
-stepwiseDecision<-function(featureData,responseData,groups){
+stepwiseDecision<-function(featureData,responseData,groups,iterations = 10){
   penalty<-rep(1,ncol(featureData))
   path<-c()                               
   mse<-list()
