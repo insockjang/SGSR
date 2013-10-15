@@ -1,70 +1,46 @@
 ### DEMO Stepwise grouping Lasso
 library(predictiveModeling)
 library(synapseClient)
-library(graphite)
-source("~/DrugResponse/R5/crossValidatePredictiveModel1.R")
-source("~/SGSR/stepwiseDecision.R")
-source("~/DrugResponse/R5/myEnetModel.R")
 
-library(multicore)
-library(doMC)
-registerDoMC()
+source("~/PredictiveModel_pipeline/R5/crossValidatePredictiveModel1.R")
+source("~/SGSR/stepwiseDecision.R")
+source("~/PredictiveModel_pipeline/R5/myEnetModel1.R")
 
 ###################################################
 #### Load CCLE Molecular Feature Data from Synapse ####
 ###################################################
-id_copyLayer <- "269019"     
-layer_copy <- loadEntity(id_copyLayer)
-eSet_copy <- layer_copy$objects$eSet_copy
-
-id_oncomapLayer <- "1528027"  
-layer_oncomap <- loadEntity(id_oncomapLayer)
-eSet_oncomap <- layer_oncomap$objects$eSet_hybrid
-
-id_exprLayer <- "269056" 
+id_exprLayer <- "syn1757082" 
 layer_expr <- loadEntity(id_exprLayer)
 eSet_expr <- layer_expr$objects$eSet_expr
 
-id_drugLayer <- "269024" 
+id_copyLayer <- "syn1757086"     
+layer_copy <- loadEntity(id_copyLayer)
+eSet_copy <- layer_copy$objects$eSet_copy
+
+id_hybridLayer <-  "syn1757084" 
+layer_hybrid <- loadEntity(id_hybridLayer)
+eSet_hybrid <- layer_hybrid$objects$eSet_hybrid
+
+id_drugLayer <- "syn1757078" 
 layer_drug <- loadEntity(id_drugLayer)
-adf_drug <- layer_drug$objects$adf_drug
+adf_drug <- layer_drug$objects$drugCCLE_ActArea
 
 
 # featureData <- createAggregateFeatureDataSet(list(expr = eSet_expr, copy = eSet_copy, mut = eSet_oncomap))
-featureData <- exprs(eSet_expr)
+featureData <- exprs(eSet_hybrid)
 
 # NA filter for training set
 featureData_filtered <- filterNasFromMatrix(featureData, filterBy = "rows")
-dataSets_ccle <- createFeatureAndResponseDataList(t(featureData_filtered),adf_drug)
+dataSets <- createFeatureAndResponseDataList(t(featureData_filtered),adf_drug)
 
 
-load("~/DrugResponse/pathway_analysis/graphite_pathways.Rdata")
-alphas  = unique(createENetTuneGrid()[,1])
-lambdas = createENetTuneGrid(alphas = 1)[,2]
+load("~/PathwayCuration/InteractDB_newly_curated_subnetwork_per_gene.Rdata")
+group<-controled
 
-
-# 5 fold cross validation 
-a1<-length(NCI)
-a2<-length(KEGG)
-a3<-length(BIOCARTA)
-a4<-length(REACTOME)
-
-groups=list()
-for(k in 1:length(NCI)){
-  groups[[k]]=nodes(NCI[[k]])
+for(k in 1:length(group)){
+  group[[k]]=union(group[[k]],names(group)[k])
 }
-
-for(k in (a1+1):(a1+length(KEGG))){
-  groups[[k]]=nodes(KEGG[[k-a1]])
-}
-
-for(k in (a1+a2+1):(a1+a2+length(BIOCARTA))){
-  groups[[k]]=nodes(BIOCARTA[[k-(a1+a2)]])
-}
-
-for(k in (a1+a2+a3+1):(a1+a2+a3+length(REACTOME))){
-  groups[[k]]=nodes(REACTOME[[k-(a1+a2+a3)]])
-}
+kk=3
 
 for(kk in 1:24){
   
@@ -73,7 +49,7 @@ for(kk in 1:24){
   #########################################################################################################
   
   # data preprocessing for preselecting features
-  filteredData<-filterPredictiveModelData(dataSets_ccle$featureData,dataSets_ccle$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
+  filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
   
   # filtered feature and response data
   filteredFeatureData  <- filteredData$featureData
@@ -81,10 +57,10 @@ for(kk in 1:24){
   
   ## scale these data    
   filteredFeatureDataScaled <- scale(filteredFeatureData)
-  filteredResponseDataScaled <- (filteredResponseData)  
+  filteredResponseDataScaled <- scale(filteredResponseData)  
   
   set.seed(2)
-  STEP<-stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups)
+  STEP<-stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,iterations= 50)
   
   set.seed(2)
   resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel$new(), alpha=1, lambda = lambdas, numFolds=3, nfolds = 3,penalty.factor = STEP$penalty
