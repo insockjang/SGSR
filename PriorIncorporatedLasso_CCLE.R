@@ -45,7 +45,9 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
   
   
   for(kk in 1:24){
-    
+    filename = paste("~/Result_priorIncorporateLasso/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
+    if(!file.exists(filename)){
+      
     #########################################################################################################
     ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################
     #########################################################################################################
@@ -67,7 +69,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
     
     set.seed(2)
     resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
-    save(resultsScale,STEP,file = paste("~/Result_priorIncorporateLasso/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = ""))
+    save(resultsScale,STEP,file = filename)
   }
   
 }
