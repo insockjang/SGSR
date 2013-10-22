@@ -1,4 +1,4 @@
-PriorIncorporatedLasso_CCLE<-function(pathwayName){
+PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
   ### DEMO Stepwise grouping Lasso
   require(predictiveModeling)
   require(synapseClient)
@@ -30,7 +30,11 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
   ###################################################
   #### Load CCLE Molecular Feature Data from Synapse ####
   ###################################################
+<<<<<<< HEAD
   dataSets<-myData_CCLE_new("C","ActArea")
+=======
+  dataSets<-myData_CCLE_new(dataCombine,"ActArea")
+>>>>>>> 6e67b9eea6d4f3ed74b262f3d55ec6e967d7d9d3
   
 #   require(graphite)
   groups=list()
@@ -45,7 +49,9 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
   
   
   for(kk in 1:24){
-    
+    filename = paste("~/Result_priorIncorporateLasso/",dataCombine,"/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
+    if(!file.exists(filename)){
+      
     #########################################################################################################
     ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################
     #########################################################################################################
@@ -67,7 +73,11 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
     
     set.seed(2)
     resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
+<<<<<<< HEAD
     save(resultsScale,STEP,file = paste("~/Result_priorIncorporateLasso/C/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = ""))
+=======
+    save(resultsScale,STEP,file = filename)
+>>>>>>> 6e67b9eea6d4f3ed74b262f3d55ec6e967d7d9d3
   }
   
 }
