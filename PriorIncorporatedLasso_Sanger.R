@@ -1,4 +1,4 @@
-PriorIncorporatedLasso_Sanger<-function(pathwayName){
+PriorIncorporatedLasso_Sanger<-function(pathwayName,dataCombine){
   ### DEMO Stepwise grouping Lasso
   require(predictiveModeling)
   require(synapseClient)
@@ -30,7 +30,7 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName){
   ###################################################
   #### Load CCLE Molecular Feature Data from Synapse ####
   ###################################################
-  dataSets<-myData_Sanger("E","IC50")
+  dataSets<-myData_Sanger(dataCombine,"IC50")
   
   #   require(graphite)
   groups=list()
@@ -45,7 +45,7 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName){
   
   
   for(kk in 1:138){
-    filename = paste("~/Result_priorIncorporateLasso/Sanger/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
+    filename = paste("~/Result_priorIncorporateLasso/",dataCombine,"/Sanger/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
     if(!file.exists(filename)){
       #########################################################################################################
       ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################

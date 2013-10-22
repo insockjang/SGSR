@@ -1,4 +1,4 @@
-PriorIncorporatedLasso_CCLE<-function(pathwayName){
+PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
   ### DEMO Stepwise grouping Lasso
   require(predictiveModeling)
   require(synapseClient)
@@ -30,7 +30,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
   ###################################################
   #### Load CCLE Molecular Feature Data from Synapse ####
   ###################################################
-  dataSets<-myData_CCLE_new("E","ActArea")
+  dataSets<-myData_CCLE_new(dataCombine,"ActArea")
   
 #   require(graphite)
   groups=list()
@@ -45,7 +45,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
   
   
   for(kk in 1:24){
-    filename = paste("~/Result_priorIncorporateLasso/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
+    filename = paste("~/Result_priorIncorporateLasso/",dataCombine,"/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
     if(!file.exists(filename)){
       
     #########################################################################################################
