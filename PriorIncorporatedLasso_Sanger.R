@@ -44,32 +44,6 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName,dataCombine){
   }
   
   
-<<<<<<< HEAD
-  for(kk in 1:45){
-    
-    #########################################################################################################
-    ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################
-    #########################################################################################################
-    
-    # data preprocessing for preselecting features
-    filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
-    
-    # filtered feature and response data
-    filteredFeatureData <- filteredData$featureData
-    filteredResponseData <- filteredData$responseData
-    
-    ## scale these data
-    filteredFeatureDataScaled <- scale(filteredFeatureData)
-    filteredResponseDataScaled <- scale(filteredResponseData)
-    
-    
-    set.seed(2)
-    STEP<-parallel_stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,8,100)
-    
-    set.seed(2)
-    resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
-    save(resultsScale,STEP,file = paste("~/Result_priorIncorporateLasso/Sanger/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = ""))
-=======
   for(kk in 1:138){
     filename = paste("~/Result_priorIncorporateLasso/",dataCombine,"/Sanger/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
     if(!file.exists(filename)){
@@ -95,7 +69,6 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName,dataCombine){
       resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
       save(resultsScale,STEP,file = filename)
     }
->>>>>>> 6e67b9eea6d4f3ed74b262f3d55ec6e967d7d9d3
   }
 }
 
