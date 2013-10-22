@@ -30,7 +30,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
   ###################################################
   #### Load CCLE Molecular Feature Data from Synapse ####
   ###################################################
-  dataSets<-myData_CCLE_new("E","ActArea")
+  dataSets<-myData_CCLE_new("C","ActArea")
   
 #   require(graphite)
   groups=list()
@@ -67,7 +67,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName){
     
     set.seed(2)
     resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
-    save(resultsScale,STEP,file = paste("~/Result_priorIncorporateLasso/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = ""))
+    save(resultsScale,STEP,file = paste("~/Result_priorIncorporateLasso/C/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = ""))
   }
   
 }

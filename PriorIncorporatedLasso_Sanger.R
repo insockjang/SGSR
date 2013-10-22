@@ -44,7 +44,7 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName){
   }
   
   
-  for(kk in 1:138){
+  for(kk in 1:45){
     
     #########################################################################################################
     ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################
