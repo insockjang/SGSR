@@ -81,7 +81,7 @@ PriorRandomLasso_CCLE<-function(pathwayName,dataCombine){
         return(resultsScale)
       }
       require(multicore)
-      resultsScale<-mclapply(1:100,function(x)testfunction(x),mc.cores=5)
+      resultsScale<-mclapply(1:100,function(x)testfunction(x),mc.cores=8)
       save(resultsScale,file = filename)
       
     }

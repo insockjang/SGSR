@@ -32,7 +32,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
   ###################################################
   dataSets<-myData_CCLE_new(dataCombine,"ActArea")
   
-#   require(graphite)
+  #   require(graphite)
   groups=list()
   for(k in 1:length(allPathways)){
     a=allPathways[[k]]
@@ -48,29 +48,30 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
     filename = paste("~/Result_priorIncorporateLasso/",dataCombine,"/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
     if(!file.exists(filename)){
       
-    #########################################################################################################
-    ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################
-    #########################################################################################################
+      #########################################################################################################
+      ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################
+      #########################################################################################################
+      
+      # data preprocessing for preselecting features
+      filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
+      
+      # filtered feature and response data
+      filteredFeatureData <- filteredData$featureData
+      filteredResponseData <- filteredData$responseData
+      
+      ## scale these data
+      filteredFeatureDataScaled <- scale(filteredFeatureData)
+      filteredResponseDataScaled <- scale(filteredResponseData)
+      
+      
+      set.seed(2)
+      STEP<-parallel_stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,8,100)
+      
+      set.seed(2)
+      resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
+      save(resultsScale,STEP,file = filename)
+    }
     
-    # data preprocessing for preselecting features
-    filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
-    
-    # filtered feature and response data
-    filteredFeatureData <- filteredData$featureData
-    filteredResponseData <- filteredData$responseData
-    
-    ## scale these data
-    filteredFeatureDataScaled <- scale(filteredFeatureData)
-    filteredResponseDataScaled <- scale(filteredResponseData)
-    
-    
-    set.seed(2)
-    STEP<-parallel_stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,8,100)
-    
-    set.seed(2)
-    resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
-    save(resultsScale,STEP,file = filename)
   }
   
-}
-
+  
