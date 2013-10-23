@@ -56,9 +56,13 @@ PriorRandomLasso_Sanger<-function(pathwayName,dataCombine){
       load(paste("~/Result_priorIncorporateLasso/",dataCombine,"/Sanger/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = ""))
       aaa<-unique(STEP$path[,1])
       
+      if(is.null(aaa)){
+        next
+      }
+      
       bbb<-c()    
       for(k.1 in 1:length(aaa)){
-        bbb = union(bbb,allPathways[[aaa[k.1]]])
+        bbb = union(bbb,allPathways[[as.numeric(aaa[k.1])]])
       }
       
       bbb1<-paste(bbb,"_expr",sep="")

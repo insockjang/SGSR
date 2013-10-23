@@ -58,7 +58,7 @@ PriorRandomLasso_CCLE<-function(pathwayName,dataCombine){
       
       bbb<-c()    
       for(k.1 in 1:length(aaa)){
-        bbb = union(bbb,allPathways[[aaa[k.1]]])
+        bbb = union(bbb,allPathways[[as.numeric(aaa[k.1])]])
       }
       
       bbb1<-paste(bbb,"_expr",sep="")
