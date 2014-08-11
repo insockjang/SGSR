@@ -7,7 +7,9 @@ randomPathway_CCLE<-function(pathwayName,dataCombine,KK = c(1:24),mcCoreNum = 32
   source("~/PredictiveModel_pipeline/myData_CCLE_new.R")
   dataSets<-myData_CCLE_new(dataCombine,"ActArea")
   
-  load("~/SGSR_01/graphite_pathways_structure.Rdata")
+  a<-synGet("syn2604222")
+  load(a@filePath)
+  
   pathwayName<-toupper(pathwayName)
   if(is.element(pathwayName,"BIOCARTA")){
     allPathways <- structure.BIOCARTA

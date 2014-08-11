@@ -3,7 +3,9 @@ ENetSameNumber_Sanger<-function(pathwayName,dataCombine,ALPHA = 0.5,KK,mcCoreNum
   library(predictiveModeling)
   library(synapseClient)
   synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
-  load("~/SGSR_01/graphite_pathways_structure.Rdata")
+  
+  a<-synGet("syn2604222")
+  load(a@filePath)
   
   source("~/PredictiveModel_pipeline/myData_Sanger.R")
   

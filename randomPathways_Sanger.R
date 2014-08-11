@@ -7,7 +7,9 @@ randomPathway_Sanger<-function(pathwayName,dataCombine,KK = NA,mcCoreNum = 32){
   source("~/PredictiveModel_pipeline/myData_Sanger.R")
   dataSets<-myData_Sanger(dataCombine,"IC50")
   
-  load("~/SGSR_01/graphite_pathways_structure.Rdata")
+  a<-synGet("syn2604222")
+  load(a@filePath)
+  
   pathwayName<-toupper(pathwayName)
   if(is.element(pathwayName,"BIOCARTA")){
     allPathways <- structure.BIOCARTA
