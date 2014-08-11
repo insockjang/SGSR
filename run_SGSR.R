@@ -1,34 +1,67 @@
 # run SGSR
-library(synapseClient)
-synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
-K<-setdiff(c(1:138),c(103,14,129,1,39,90,127,123,13,4,110,6,9,12,95,94,108,11,17,2,122,124,126,87,84,75,41,82))
-source("~/SGSR_01/PriorIncorporatedLasso_Sanger.R")
-PathwayName<-c("NCI")#,"BIOCARTA","NCI","GO_BP","GO_MF")
-DataCombine<-c("E")
+# example: NCI database with Mh dataset in CCLE
+
+# Step 01 : stepwise prior selection
+source("~/SGSR/SGSR_prior.R")
+PathwayName<-c("NCI")
+DataCombine<-c("Mh")#,"E","C")
 for(k1 in PathwayName){
   for(k2 in DataCombine){
-    PriorIncorporatedLasso_Sanger(k1,k2,KK=K)
+    SGSR_CCLE(k1,k2)
   }
 }
 
-# run SGSR
-library(synapseClient)
-synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
-K<-setdiff(c(1:138),c(103,14,129,1,39,90,127,123,13,4,110,6,9,12,95,94,108,11,17,2,122,124,126,87,84,75,41,82))
-source("~/SGSR_01/restorePriorIncorporatedLasso_Sanger.R")
-source("~/SGSR_01/PriorRandomLasso_Sanger.R")
-source("~/SGSR_01/randomPathways_Sanger.R")
-source("~/SGSR_01/ENetSameNumber_Sanger.R")
-
-PathwayName<-c("NCI")#,"BIOCARTA","NCI","GO_BP","GO_MF")
-DataCombine<-c("E")
+# Step 01-2 : if you need only feature selection : bootstrapping 
+source("~/SGSR/bsSGSR_prior.R")
+PathwayName<-c("NCI")
+DataCombine<-c("Mh")#,"E","C")
 for(k1 in PathwayName){
   for(k2 in DataCombine){
-    restorePriorIncorporatedLasso_Sanger(k1,k2,KK=K)
-    PriorRandomLasso_Sanger(k1,k2,KK=K)
-    randomPathways_Sanger(k1,k2,KK=K)    
-    ENetSameNumber_Sanger(k1,k2,KK=K)
+    bsSGSR_prior_CCLE(k1,k2,bsNum = 100)
   }
 }
 
 
+# Step 02: prediction is separately run with restoreSGSR.R
+
+source("~/SGSR/restoreSGSR.R")
+PathwayName<-c("NCI")
+DataCombine<-c("Mh")#,"E","C")
+for(k1 in PathwayName){
+  for(k2 in DataCombine){
+    restoreSGSR_CCLE(k1,k2)
+  }
+}
+
+# Step 03 : Elastic Net with fixed sparsity with SGSR
+
+source("~/SGSR/ENetSameNumber.R")
+PathwayName<-c("NCI")
+DataCombine<-c("Mh")#,"E","C")
+for(k1 in PathwayName){
+  for(k2 in DataCombine){
+    ENetSameNumber_CCLE(k1,k2)
+  }
+}
+
+# Step 04 : Random Genes approach : null distribution for SGSR
+
+source("~/SGSR/randomGene.R")
+PathwayName<-c("NCI")
+DataCombine<-c("Mh")#,"E","C")
+for(k1 in PathwayName){
+  for(k2 in DataCombine){
+    randomGene_CCLE(k1,k2)
+  }
+}
+
+# Step 05 : Random pathway structure approach : null distribution for SGSR
+
+source("~/SGSR/randomPathways.R")
+PathwayName<-c("NCI")
+DataCombine<-c("Mh")#,"E","C")
+for(k1 in PathwayName){
+  for(k2 in DataCombine){
+    randomPathway_CCLE(k1,k2)
+  }
+}
