@@ -26,6 +26,14 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName,dataCombine){
   if(is.element(pathwayName,"NCI")){
     allPathways <- NCI
   }    
+  MSigDB<-synGet("syn2227979")
+  load(MSigDB@filePath)
+  if(is.element(pathwayName,"GO_BP")){
+    allPathways <- MSigDB$C5.GO_BP
+  }    
+  if(is.element(pathwayName,"GO_MF")){
+    allPathways <- MSigDB$C5.GO_MF
+  }    
   
   ###################################################
   #### Load CCLE Molecular Feature Data from Synapse ####
@@ -43,16 +51,16 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName,dataCombine){
     groups[[k]]<-aa
   }
   
-  
-  for(kk in 1:138){
-    filename = paste("~/Result_priorIncorporateLasso/",dataCombine,"/Sanger/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
+  KK<-c(129,127,95,94,108,39,11,17,90,2,122,124,126,1,87,84,6,75)
+  for(kk in KK){
+    filename = paste("~/Result_priorIncorporateLasso_filterVar02//",dataCombine,"/Sanger/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
     if(!file.exists(filename)){
       #########################################################################################################
       ######## Training and Testing data are scaled(normalized) vs. raw(unnormalized) #######################
       #########################################################################################################
       
       # data preprocessing for preselecting features
-      filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
+      filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE],featureVarianceThreshold = 0.2)
       
       # filtered feature and response data
       filteredFeatureData <- filteredData$featureData
@@ -63,7 +71,9 @@ PriorIncorporatedLasso_Sanger<-function(pathwayName,dataCombine){
       filteredResponseDataScaled <- scale(filteredResponseData)
       
       set.seed(2)
-      STEP<-parallel_stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,8,100)
+      STEP<-parallel_stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,coreNum = 32,100)
+      
+      
       
       set.seed(2)
       resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)

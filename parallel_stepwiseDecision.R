@@ -1,3 +1,4 @@
+require(multicore)
 parallel_stepwiseDecision<-function(featureData,responseData,groups,coreNum = 1, iterations = 10){
   penalty<-rep(1,ncol(featureData))
   path<-c()                               
@@ -10,7 +11,7 @@ parallel_stepwiseDecision<-function(featureData,responseData,groups,coreNum = 1,
     fit<-cv.glmnet(featureData,responseData,alpha=1,nfolds=5,penalty.factor = penalty)
     a<-min(fit$cvm)
     
-    require(multicore)
+    
     grouping<-function(kkk){
       group <- groups[[kkk]]
       b<-match(group,colnames(featureData))

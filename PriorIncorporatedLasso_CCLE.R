@@ -26,6 +26,14 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
   if(is.element(pathwayName,"NCI")){
     allPathways <- NCI
   }    
+  MSigDB<-synGet("syn2227979")
+  load(MSigDB@filePath)
+  if(is.element(pathwayName,"GO_BP")){
+    allPathways <- MSigDB$C5.GO_BP
+  }    
+  if(is.element(pathwayName,"GO_MF")){
+    allPathways <- MSigDB$C5.GO_MF
+  }    
   
   ###################################################
   #### Load CCLE Molecular Feature Data from Synapse ####
@@ -45,7 +53,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
   
   
   for(kk in 1:24){
-    filename = paste("~/Result_priorIncorporateLasso/",dataCombine,"/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
+    filename = paste("~/Result_priorIncorporateLasso_filterVar02/",dataCombine,"/CCLE/",pathwayName,"/PriorIncorporated_cvDrug_",kk,".Rdata",sep = "")
     if(!file.exists(filename)){
       
       #########################################################################################################
@@ -53,7 +61,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
       #########################################################################################################
       
       # data preprocessing for preselecting features
-      filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE], featureVarianceThreshold = 0.01, corPValThresh = 0.1)
+      filteredData<-filterPredictiveModelData(dataSets$featureData,dataSets$responseData[,kk,drop=FALSE],featureVarianceThreshold = 0.2)
       
       # filtered feature and response data
       filteredFeatureData <- filteredData$featureData
@@ -65,7 +73,7 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
       
       
       set.seed(2)
-      STEP<-parallel_stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,8,100)
+      STEP<-parallel_stepwiseDecision(filteredFeatureDataScaled,filteredResponseDataScaled,groups,coreNum = 10,100)
       
       set.seed(2)
       resultsScale<-crossValidatePredictiveModel1(filteredFeatureDataScaled, filteredResponseDataScaled, model = myEnetModel1$new(), alpha=1, numFolds=5, nfolds = 5,penalty.factor = STEP$penalty)
@@ -73,5 +81,5 @@ PriorIncorporatedLasso_CCLE<-function(pathwayName,dataCombine){
     }
     
   }
-  
-  
+}
+
