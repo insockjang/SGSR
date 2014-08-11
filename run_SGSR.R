@@ -4,20 +4,10 @@
 # Step 01 : stepwise prior selection
 source("~/SGSR/SGSR_prior.R")
 PathwayName<-c("NCI")
-DataCombine<-c("Mh")#,"E","C")
+DataCombine<-c("Mh")
 for(k1 in PathwayName){
   for(k2 in DataCombine){
     SGSR_CCLE(k1,k2)
-  }
-}
-
-# Step 01-2 : if you need only feature selection : bootstrapping 
-source("~/SGSR/bsSGSR_prior.R")
-PathwayName<-c("NCI")
-DataCombine<-c("Mh")#,"E","C")
-for(k1 in PathwayName){
-  for(k2 in DataCombine){
-    bsSGSR_prior_CCLE(k1,k2,bsNum = 100)
   }
 }
 
@@ -26,7 +16,7 @@ for(k1 in PathwayName){
 
 source("~/SGSR/restoreSGSR.R")
 PathwayName<-c("NCI")
-DataCombine<-c("Mh")#,"E","C")
+DataCombine<-c("Mh")
 for(k1 in PathwayName){
   for(k2 in DataCombine){
     restoreSGSR_CCLE(k1,k2)
@@ -37,7 +27,7 @@ for(k1 in PathwayName){
 
 source("~/SGSR/ENetSameNumber.R")
 PathwayName<-c("NCI")
-DataCombine<-c("Mh")#,"E","C")
+DataCombine<-c("Mh")
 for(k1 in PathwayName){
   for(k2 in DataCombine){
     ENetSameNumber_CCLE(k1,k2)
@@ -48,7 +38,7 @@ for(k1 in PathwayName){
 
 source("~/SGSR/randomGene.R")
 PathwayName<-c("NCI")
-DataCombine<-c("Mh")#,"E","C")
+DataCombine<-c("Mh")
 for(k1 in PathwayName){
   for(k2 in DataCombine){
     randomGene_CCLE(k1,k2)
@@ -59,7 +49,7 @@ for(k1 in PathwayName){
 
 source("~/SGSR/randomPathways.R")
 PathwayName<-c("NCI")
-DataCombine<-c("Mh")#,"E","C")
+DataCombine<-c("Mh")
 for(k1 in PathwayName){
   for(k2 in DataCombine){
     randomPathway_CCLE(k1,k2)
