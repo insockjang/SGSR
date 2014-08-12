@@ -4,9 +4,9 @@ randomPathway_CCLE<-function(pathwayName,dataCombine,KK = c(1:24),mcCoreNum = 32
   library(synapseClient)
   require(devtools)
   
-  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
-  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
-  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_CCLE_new.R")
+  source_url("https://raw.githubusercontent.com/insockjang/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
+  source_url("https://raw.githubusercontent.com/insockjang/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
+  source_url("https://raw.githubusercontent.com/insockjang/PredictiveModel_pipeline/master/myData_CCLE_new.R")
   dataSets<-myData_CCLE_new(dataCombine,"ActArea")
   
   a<-synGet("syn2604222")
@@ -132,9 +132,9 @@ randomPathway_Sanger<-function(pathwayName,dataCombine,KK = NA,mcCoreNum = 32){
   library(synapseClient)
   require(devtools)
   
-  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_Sanger.R")
-  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
-  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
+  source_url("https://raw.githubusercontent.com/insockjang/PredictiveModel_pipeline/master/myData_Sanger.R")
+  source_url("https://raw.githubusercontent.com/insockjang/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
+  source_url("https://raw.githubusercontent.com/insockjang/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
   
   dataSets<-myData_Sanger(dataCombine,"IC50")
   
