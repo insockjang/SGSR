@@ -2,7 +2,7 @@ ENetSameNumber_CCLE<-function(pathwayName,dataCombine,ALPHA = 0.5,KK){
   ### Cross training and testing
   library(predictiveModeling)
   library(synapseClient)
-  synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
+  require(devtools)
   
   a<-synGet("syn2604222")
   load(a@filePath)
@@ -10,13 +10,9 @@ ENetSameNumber_CCLE<-function(pathwayName,dataCombine,ALPHA = 0.5,KK){
   source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
   source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
   source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_CCLE_new.R")
-  
-  
-  
+    
   dataSets<-myData_CCLE_new(dataCombine,"ActArea")
-  
-  
-  
+    
   # testfunction<-function(kk){
   allProcess<-function(kk){  
     filename1 = paste("~/Result_priorIncorporateLassoNew_filterVar02/",dataCombine,"/CCLE/",pathwayName,"/PriorENet_alpha_",ALPHA,"_cvDrug_",kk,".Rdata",sep = "")
@@ -65,7 +61,7 @@ ENetSameNumber_Sanger<-function(pathwayName,dataCombine,ALPHA = 0.5,KK,mcCoreNum
   ### Cross training and testing
   library(predictiveModeling)
   library(synapseClient)
-  synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
+  require(devtools)
   
   a<-synGet("syn2604222")
   load(a@filePath)
@@ -73,11 +69,9 @@ ENetSameNumber_Sanger<-function(pathwayName,dataCombine,ALPHA = 0.5,KK,mcCoreNum
   source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
   source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
   source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_Sanger.R")
-  
-  
+    
   dataSets<-myData_Sanger(dataCombine,"IC50")
-  
-  
+    
   # testfunction<-function(kk){
   allProcess<-function(kk){  
     filename1 = paste("~/Result_priorIncorporateLassoNew_filterVar02/",dataCombine,"/Sanger/",pathwayName,"/PriorENet_alpha_",ALPHA,"_cvDrug_",kk,".Rdata",sep = "")
