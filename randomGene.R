@@ -3,9 +3,10 @@ randomGene_CCLE<-function(pathwayName,dataCombine,KK = c(1:24),mcCoreNum = 32){
   require(predictiveModeling)
   require(synapseClient)
   # synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
-  source("~/PredictiveModel_pipeline/R5/crossValidatePredictiveModel1.R")
-  source("~/PredictiveModel_pipeline/R5/myEnetModel1.R")
-  source("~/PredictiveModel_pipeline/myData_CCLE_new.R")
+  
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_CCLE_new.R")
   
   
   ###################################################
@@ -93,9 +94,9 @@ randomGene_Sanger<-function(pathwayName,dataCombine,KK = NA,mcCoreNum = 32){
   require(predictiveModeling)
   require(synapseClient)
   # synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
-  source("~/PredictiveModel_pipeline/R5/crossValidatePredictiveModel1.R")
-  source("~/PredictiveModel_pipeline/R5/myEnetModel1.R")
-  source("~/PredictiveModel_pipeline/myData_Sanger.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_Sanger.R")
   
   
   ###################################################

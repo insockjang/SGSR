@@ -4,7 +4,7 @@ randomPathway_CCLE<-function(pathwayName,dataCombine,KK = c(1:24),mcCoreNum = 32
   library(synapseClient)
   synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
   
-  source("~/PredictiveModel_pipeline/myData_CCLE_new.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_CCLE_new.R")
   dataSets<-myData_CCLE_new(dataCombine,"ActArea")
   
   a<-synGet("syn2604222")
@@ -29,9 +29,8 @@ randomPathway_CCLE<-function(pathwayName,dataCombine,KK = c(1:24),mcCoreNum = 32
   
   
   
-  
-  source("~/PredictiveModel_pipeline/R5/myEnetModel1.R")
-  source("~/PredictiveModel_pipeline/R5/crossValidatePredictiveModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
   
   # testfunction<-function(kk){
   for(kk in KK){  
@@ -135,7 +134,7 @@ randomPathway_Sanger<-function(pathwayName,dataCombine,KK = NA,mcCoreNum = 32){
   library(synapseClient)
   synapseLogin("in.sock.jang@sagebase.org","tjsDUD@")
   
-  source("~/PredictiveModel_pipeline/myData_Sanger.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/myData_Sanger.R")
   dataSets<-myData_Sanger(dataCombine,"IC50")
   
   a<-synGet("syn2604222")
@@ -158,8 +157,8 @@ randomPathway_Sanger<-function(pathwayName,dataCombine,KK = NA,mcCoreNum = 32){
     allPathways <- structure.GO_MF
   }    
   
-  source("~/PredictiveModel_pipeline/R5/myEnetModel1.R")
-  source("~/PredictiveModel_pipeline/R5/crossValidatePredictiveModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/myEnetModel1.R")
+  source_url("https://raw.githubusercontent.com/Sage-Bionetworks/PredictiveModel_pipeline/master/R5/crossValidatePredictiveModel1.R")
   
   # testfunction<-function(kk){
   for(kk in KK){  
