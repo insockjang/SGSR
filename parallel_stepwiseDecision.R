@@ -1,4 +1,5 @@
-require(multicore)
+require(doParallel)
+
 parallel_stepwiseDecision<-function(featureData,responseData,groups,coreNum = 1, iterations = 10){
   penalty<-rep(1,ncol(featureData))
   path<-c()                               
